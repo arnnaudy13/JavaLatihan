@@ -1,0 +1,157 @@
+package com.latihanjuara;
+
+import java.util.*;
+
+class Product {
+    String nameProduct;
+    String categoryProduct;
+    int stockProduct;
+    double priceProduct;
+
+    public Product(String nameProduct, String categoryProduct, int stockProduct, double priceProduct) {
+        this.nameProduct = nameProduct;
+        this.categoryProduct = categoryProduct;
+        this.stockProduct = stockProduct;
+        this.priceProduct = priceProduct;
+    }
+
+    public String getNameProduct() {
+        return nameProduct;
+    }
+
+    public int getStockProduct() {
+        return stockProduct;
+    }
+
+    public void reduceStock(int amount) {
+        this.stockProduct -= amount;
+    }
+
+    public double getPriceProduct() {
+        return priceProduct;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Produk: %s | Kategori: %s | Stok: %d | Harga: Rp%,.2f", nameProduct, categoryProduct, stockProduct, priceProduct);
+    }
+}
+
+public class MiniProject {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("---TOKO ONLINE---");
+
+        // Data Produk
+        Map<Integer, Product> productMap = new HashMap<>();
+        productMap.put(1, new Product("Mouse", "Electronics", 12, 70000));
+        productMap.put(2, new Product("Pen", "Stationery", 120, 2000));
+        productMap.put(3, new Product("Keyboard", "Electronics", 75, 150000));
+        productMap.put(4, new Product("Book", "Stationery", 200, 15000));
+
+        while (true) {
+            System.out.println("\n----MENU----");
+            System.out.println("1. Lihat Produk");
+            System.out.println("2. Tambah Produk");
+            System.out.println("3. Hapus Produk");
+            System.out.println("4. Cari Produk");
+            System.out.println("5. Beli Produk");
+            System.out.println("6. Keluar");
+            System.out.print("Pilih opsi: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    List<Map.Entry<Integer, Product>> listProduct = new ArrayList<>(productMap.entrySet());
+                    listProduct.sort(Comparator.comparing(entry -> entry.getValue().getNameProduct()));
+
+                    System.out.println("Data Produk Dijual:");
+                    for (Map.Entry<Integer, Product> entry : listProduct) {
+                        System.out.println(entry.getKey() + ". " + entry.getValue());
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Masukkan ID Produk Baru: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Nama Produk: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Kategori Produk: ");
+                    String category = scanner.nextLine();
+                    System.out.print("Stok Produk: ");
+                    int stock = scanner.nextInt();
+                    System.out.print("Harga Produk: ");
+                    double price = scanner.nextDouble();
+
+                    productMap.put(id, new Product(name, category, stock, price));
+                    System.out.println("Produk berhasil ditambahkan!");
+                    break;
+
+                case 3:
+                    System.out.print("Masukkan ID Produk yang ingin dihapus: ");
+                    int removeId = scanner.nextInt();
+                    if (productMap.containsKey(removeId)) {
+                        productMap.remove(removeId);
+                        System.out.println("Produk berhasil dihapus!");
+                    } else {
+                        System.out.println("Produk dengan ID tersebut tidak ditemukan.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Input Nama Produk yang dicari: ");
+                    String searchProduct = scanner.nextLine();
+                    Product foundProduct = searchByProductName(productMap, searchProduct);
+                    if (foundProduct != null) {
+                        System.out.println("\nData Produk ditemukan: ");
+                        System.out.println(foundProduct);
+                    } else {
+                        System.out.println("\nData Produk " + searchProduct + " tidak ditemukan.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Masukkan Nama Produk yang ingin dibeli: ");
+                    String purchaseProduct = scanner.nextLine();
+                    Product productToBuy = searchByProductName(productMap, purchaseProduct);
+
+                    if (productToBuy != null) {
+                        System.out.print("Masukkan jumlah yang ingin dibeli: ");
+                        int quantity = scanner.nextInt();
+
+                        if (quantity <= productToBuy.getStockProduct()) {
+                            double totalPrice = productToBuy.getPriceProduct() * quantity;
+                            productToBuy.reduceStock(quantity);
+                            System.out.println("Berhasil membeli " + quantity + " " + productToBuy.getNameProduct() + ".");
+                            System.out.println("Total harga: Rp" + totalPrice);
+                        } else {
+                            System.out.println("Stok tidak cukup! Stok tersedia: " + productToBuy.getStockProduct());
+                        }
+                    } else {
+                        System.out.println("Produk tidak ditemukan.");
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("Terima kasih telah menggunakan TOKO ONLINE!");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Pilihan tidak valid. Silakan coba lagi.");
+            }
+        }
+    }
+
+    private static Product searchByProductName(Map<Integer, Product> productMap, String searchProduct) {
+        for (Product product : productMap.values()) {
+            if (product.getNameProduct().equalsIgnoreCase(searchProduct)) {
+                return product;
+            }
+        }
+        return null;
+    }
+}
