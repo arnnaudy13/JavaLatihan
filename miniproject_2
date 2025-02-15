@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class StudentManagementApp {
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=latihanjuara;encrypt=true;trustServerCertificate=true";
-    private static final String USER = "latihanjuarauser";
-    private static final String PASSWORD = "13122001";
+    private static final String USER = "akun";
+    private static final String PASSWORD = "password";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
